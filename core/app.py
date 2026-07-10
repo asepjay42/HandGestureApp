@@ -6,11 +6,15 @@ from config import (
     MIN_TRACKING_CONFIDENCE,
     PHOTO_BLUR_MUSIC,
     JOKOWI_MUSIC,
+    FPS_HISTORY,
+    FPS_REFRESH_INTERVAL,
 )
 
 from core.audio import AudioManager
 from core.detector import GestureDetector
+from core.fps import FPSCounter
 from core.gesture import Gesture
+from core.hud import HUD
 from core.renderer import Renderer
 
 from utils.camera import Camera
@@ -45,11 +49,22 @@ class HandGestureApp:
 
         self.renderer = Renderer()
 
-        self.audio = AudioManager()
+        # ==========================================
+        # Performance
+        # ==========================================
+
+        self.hud = HUD()
+
+        self.fps = FPSCounter(
+            history=FPS_HISTORY,
+            refresh_interval=FPS_REFRESH_INTERVAL,
+        )
 
         # ==========================================
         # Audio
         # ==========================================
+
+        self.audio = AudioManager()
 
         self.audio.load(
             "blur",
@@ -275,14 +290,14 @@ class HandGestureApp:
             frame
         )
 
-        self.renderer.draw_status(
-            frame,
-            self.mode,
-        )
+        #self.renderer.draw_status(
+        #    frame,
+        #    self.mode,
+        #)
 
-        self.renderer.draw_hint(
-            frame,
-        )
+        #self.renderer.draw_hint(
+        #    frame,
+        #)
 
         return frame
 
@@ -314,6 +329,25 @@ class HandGestureApp:
 
                 frame = self.process_frame(
                     frame
+                )
+
+                # ==========================================
+                # Update FPS
+                # ==========================================
+
+                fps = self.fps.update()
+
+                hud_data = {
+
+                    "fps": fps,
+
+                    "gesture": self.mode,
+
+                }
+
+                self.hud.draw(
+                    frame,
+                    hud_data,
                 )
 
                 cv2.imshow(

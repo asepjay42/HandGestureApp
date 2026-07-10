@@ -30,6 +30,13 @@ MIN_DETECTION_CONFIDENCE = 0.7
 MIN_TRACKING_CONFIDENCE = 0.7
 MAX_HANDS = 1
 
+# ==========================================
+# Performance
+# ==========================================
+
+FPS_HISTORY = 10
+FPS_REFRESH_INTERVAL = 0.5
+
 # ==========================
 # Blur
 # ==========================
